@@ -1,0 +1,11 @@
+D:\soft.src\yasoft\edu\kpi\c3s2\ai\Task1\Task1\Task1\bin\Debug\netcoreapp3.1\Task1.exe
+D:\soft.src\yasoft\edu\kpi\c3s2\ai\Task1\Task1\Task1\bin\Debug\netcoreapp3.1\Task1.deps.json
+D:\soft.src\yasoft\edu\kpi\c3s2\ai\Task1\Task1\Task1\bin\Debug\netcoreapp3.1\Task1.runtimeconfig.json
+D:\soft.src\yasoft\edu\kpi\c3s2\ai\Task1\Task1\Task1\bin\Debug\netcoreapp3.1\Task1.runtimeconfig.dev.json
+D:\soft.src\yasoft\edu\kpi\c3s2\ai\Task1\Task1\Task1\bin\Debug\netcoreapp3.1\Task1.dll
+D:\soft.src\yasoft\edu\kpi\c3s2\ai\Task1\Task1\Task1\bin\Debug\netcoreapp3.1\Task1.pdb
+D:\soft.src\yasoft\edu\kpi\c3s2\ai\Task1\Task1\Task1\obj\Debug\netcoreapp3.1\Task1.csprojAssemblyReference.cache
+D:\soft.src\yasoft\edu\kpi\c3s2\ai\Task1\Task1\Task1\obj\Debug\netcoreapp3.1\Task1.AssemblyInfoInputs.cache
+D:\soft.src\yasoft\edu\kpi\c3s2\ai\Task1\Task1\Task1\obj\Debug\netcoreapp3.1\Task1.AssemblyInfo.cs
+D:\soft.src\yasoft\edu\kpi\c3s2\ai\Task1\Task1\Task1\obj\Debug\netcoreapp3.1\Task1.dll
+D:\soft.src\yasoft\edu\kpi\c3s2\ai\Task1\Task1\Task1\obj\Debug\netcoreapp3.1\Task1.pdb
