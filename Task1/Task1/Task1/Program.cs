@@ -7,7 +7,7 @@ namespace Task1
 	{
 		static void Main(string[] args)
 		{
-			new Worker().Do();
+			new Worker().Do(5);
 		}
 	}
 }

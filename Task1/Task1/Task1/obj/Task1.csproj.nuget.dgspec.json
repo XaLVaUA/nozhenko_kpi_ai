@@ -1,23 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\soft.src\\yasoft\\edu\\kpi\\c3s2\\ai\\Task1\\Task1\\Task1\\Task1.csproj": {}
+    "D:\\development\\kpi\\c3s2\\ai\\Task1\\Task1\\Task1\\Task1.csproj": {}
   },
   "projects": {
-    "D:\\soft.src\\yasoft\\edu\\kpi\\c3s2\\ai\\Task1\\Task1\\Task1\\Task1.csproj": {
+    "D:\\development\\kpi\\c3s2\\ai\\Task1\\Task1\\Task1\\Task1.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\soft.src\\yasoft\\edu\\kpi\\c3s2\\ai\\Task1\\Task1\\Task1\\Task1.csproj",
+        "projectUniqueName": "D:\\development\\kpi\\c3s2\\ai\\Task1\\Task1\\Task1\\Task1.csproj",
         "projectName": "Task1",
-        "projectPath": "D:\\soft.src\\yasoft\\edu\\kpi\\c3s2\\ai\\Task1\\Task1\\Task1\\Task1.csproj",
-        "packagesPath": "C:\\Users\\Yaroslav\\.nuget\\packages\\",
-        "outputPath": "D:\\soft.src\\yasoft\\edu\\kpi\\c3s2\\ai\\Task1\\Task1\\Task1\\obj\\",
+        "projectPath": "D:\\development\\kpi\\c3s2\\ai\\Task1\\Task1\\Task1\\Task1.csproj",
+        "packagesPath": "C:\\Users\\yaroslav\\.nuget\\packages\\",
+        "outputPath": "D:\\development\\kpi\\c3s2\\ai\\Task1\\Task1\\Task1\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Yaroslav\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\yaroslav\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

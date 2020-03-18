@@ -8,17 +8,6 @@ namespace Task1
 {
 	public class Worker
 	{
-		public Random Random { get; set; }
-
-		public Stack<State> StateStack { get; set; }
-
-		public Worker()
-		{
-			Random = new Random();
-			StateStack = new Stack<State>();
-			StateStack.Push(GenerateStartState());
-		}
-
 		public State GenerateStartState()
 		{
 			var state = new State(StateCode.BoatTransfer);
@@ -36,21 +25,42 @@ namespace Task1
 			return state;
 		}
 
-		public void Do()
-		{
-			while (StateStack.Count > 0)
+        public void Do(int attempts)
+        {
+            var bestStateChain = new Stack<State>();
+            var bestChainCount = int.MaxValue;
+
+            for (int i = 0; i < attempts; ++i)
+            {
+                var attemptStateChain = Tick();
+
+				if (attemptStateChain == null) continue;
+
+                if (attemptStateChain.Count >= bestChainCount) continue;
+
+                bestStateChain = attemptStateChain;
+                bestChainCount = attemptStateChain.Count;
+            }
+
+			PrintStateChain(bestStateChain);
+        }
+
+		public Stack<State> Tick()
+        {
+            var stateStack = new Stack<State>();
+			stateStack.Push(GenerateStartState());
+
+			while (stateStack.Count > 0)
 			{
-				var currentState = StateStack.Pop();
+				var currentState = stateStack.Pop();
 
 				//Console.WriteLine(currentState);
 				//Thread.Sleep(200);
 
 				if (IsGoalState(currentState))
 				{
-					Console.WriteLine("Goal reached!");
-					PrintStateChain(currentState);
-					break;
-				}
+					return SaveStateChain(currentState);
+                }
 
 				Shuffle(currentState.LeftSideCreatures);
 				Shuffle(currentState.RightSideCreatures);
@@ -90,7 +100,7 @@ namespace Task1
 							newState.LeftSideCreatures.Add(new Creature(creature));
 							newState.PreStateCode = StateCode.LeftSideFromBoat;
 							newState.PreState = currentState;
-							StateStack.Push(newState);
+							stateStack.Push(newState);
 						}
 					}
 
@@ -111,7 +121,7 @@ namespace Task1
 							newState.Boat.OnBoardCreatures.Add(new Creature(creature));
 							newState.PreStateCode = StateCode.RightSideToBoat;
 							newState.PreState = currentState;
-							StateStack.Push(newState);
+							stateStack.Push(newState);
 						}
 					}
 					else
@@ -127,7 +137,7 @@ namespace Task1
 							newState.Boat.OnBoardCreatures.Add(new Creature(creature));
 							newState.PreStateCode = StateCode.RightSideToBoat;
 							newState.PreState = currentState;
-							StateStack.Push(newState);
+							stateStack.Push(newState);
 						}
 					}
 				}
@@ -143,7 +153,7 @@ namespace Task1
 						newState.Boat.OnLeftSide = !newState.Boat.OnLeftSide;
 						newState.PreStateCode = StateCode.BoatTransfer;
 						newState.PreState = currentState;
-						StateStack.Push(newState);
+						stateStack.Push(newState);
 					}
 
 					#endregion
@@ -183,7 +193,7 @@ namespace Task1
 							newState.RightSideCreatures.Add(new Creature(creature));
 							newState.PreStateCode = StateCode.RightSideFromBoat;
 							newState.PreState = currentState;
-							StateStack.Push(newState);
+							stateStack.Push(newState);
 						}
 					}
 
@@ -204,7 +214,7 @@ namespace Task1
 							newState.Boat.OnBoardCreatures.Add(new Creature(creature));
 							newState.PreStateCode = StateCode.LeftSideToBoat;
 							newState.PreState = currentState;
-							StateStack.Push(newState);
+							stateStack.Push(newState);
 						}
 					}
 					else
@@ -221,36 +231,47 @@ namespace Task1
 							newState.Boat.OnBoardCreatures.Add(new Creature(creature));
 							newState.PreStateCode = StateCode.LeftSideToBoat;
 							newState.PreState = currentState;
-							StateStack.Push(newState);
+							stateStack.Push(newState);
 						}
 					}
 				}
 
 				#endregion
 			}
-		}
+
+            return null;
+        }
 
 		public bool IsGoalState(State state)
 		{
 			return state.RightSideCreatures.Count == 6;
 		}
 
-		public void PrintStateChain(State state)
+		public Stack<State> SaveStateChain(State state)
 		{
-			var count = 0;
-			var curState = state;
+			var chain = new Stack<State>();
+            var curState = state;
 			
 			do
 			{
-				++count;
-				Console.WriteLine($"#{count}");
-				Console.WriteLine(curState);
-				curState = curState.PreState;
+				chain.Push(curState);
+                curState = curState.PreState;
 			} 
 			while (curState != null);
 
-			Console.WriteLine($"\nStart here /|\\ \nNode count: {count}");
-		}
+            return chain;
+        }
+
+        public void PrintStateChain(Stack<State> states)
+        {
+            var no = 0;
+            foreach (var state in states)
+            {
+                ++no;
+				Console.Write($"#{no}");
+				Console.WriteLine(state);
+            }
+        }
 
 		public static List<T> Shuffle<T>(List<T> list)
 		{

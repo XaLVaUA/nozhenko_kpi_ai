@@ -9,3 +9,14 @@ D:\soft.src\yasoft\edu\kpi\c3s2\ai\Task1\Task1\Task1\obj\Debug\netcoreapp3.1\Tas
 D:\soft.src\yasoft\edu\kpi\c3s2\ai\Task1\Task1\Task1\obj\Debug\netcoreapp3.1\Task1.AssemblyInfo.cs
 D:\soft.src\yasoft\edu\kpi\c3s2\ai\Task1\Task1\Task1\obj\Debug\netcoreapp3.1\Task1.dll
 D:\soft.src\yasoft\edu\kpi\c3s2\ai\Task1\Task1\Task1\obj\Debug\netcoreapp3.1\Task1.pdb
+D:\development\kpi\c3s2\ai\Task1\Task1\Task1\bin\Debug\netcoreapp3.1\Task1.exe
+D:\development\kpi\c3s2\ai\Task1\Task1\Task1\bin\Debug\netcoreapp3.1\Task1.deps.json
+D:\development\kpi\c3s2\ai\Task1\Task1\Task1\bin\Debug\netcoreapp3.1\Task1.runtimeconfig.json
+D:\development\kpi\c3s2\ai\Task1\Task1\Task1\bin\Debug\netcoreapp3.1\Task1.runtimeconfig.dev.json
+D:\development\kpi\c3s2\ai\Task1\Task1\Task1\bin\Debug\netcoreapp3.1\Task1.dll
+D:\development\kpi\c3s2\ai\Task1\Task1\Task1\bin\Debug\netcoreapp3.1\Task1.pdb
+D:\development\kpi\c3s2\ai\Task1\Task1\Task1\obj\Debug\netcoreapp3.1\Task1.csprojAssemblyReference.cache
+D:\development\kpi\c3s2\ai\Task1\Task1\Task1\obj\Debug\netcoreapp3.1\Task1.AssemblyInfoInputs.cache
+D:\development\kpi\c3s2\ai\Task1\Task1\Task1\obj\Debug\netcoreapp3.1\Task1.AssemblyInfo.cs
+D:\development\kpi\c3s2\ai\Task1\Task1\Task1\obj\Debug\netcoreapp3.1\Task1.dll
+D:\development\kpi\c3s2\ai\Task1\Task1\Task1\obj\Debug\netcoreapp3.1\Task1.pdb
