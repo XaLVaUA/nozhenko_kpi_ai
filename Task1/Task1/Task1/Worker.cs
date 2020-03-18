@@ -8,6 +8,7 @@ namespace Task1
 {
 	public class Worker
 	{
+        // получение начального состояния
 		public State GenerateStartState()
 		{
 			var state = new State(StateCode.BoatTransfer);
@@ -25,7 +26,8 @@ namespace Task1
 			return state;
 		}
 
-        public void Do(int attempts)
+        // выполнение задания та вывод результата лучшей попытки поиска из attempts раз
+		public void Do(int attempts)
         {
             var bestStateChain = new Stack<State>();
             var bestChainCount = int.MaxValue;
@@ -45,6 +47,7 @@ namespace Task1
 			PrintStateChain(bestStateChain);
         }
 
+        // выполнить поиск в глубину и вернуть цепочку состояний
 		public Stack<State> Tick()
         {
             var stateStack = new Stack<State>();
@@ -62,15 +65,18 @@ namespace Task1
 					return SaveStateChain(currentState);
                 }
 
+                // перемешать списки для избежания зациклености
 				Shuffle(currentState.LeftSideCreatures);
 				Shuffle(currentState.RightSideCreatures);
 				Shuffle(currentState.Boat.OnBoardCreatures);
 
+                // проверка предыдущего состояния на целесообразность действия
 				if (currentState.PreStateCode != StateCode.LeftSideToBoat)
 				{
-					#region LeftSideFromBoat
+					// проверка и создания новых состояний когда лодка на левом берегу и происходит высадка
+                    #region LeftSideFromBoat
 
-					if (currentState.Boat.OnLeftSide && currentState.Boat.OnBoardCreatures.Count > 0)
+					if (currentState.Boat.IsOnLeftSide && currentState.Boat.OnBoardCreatures.Count > 0)
 					{
 						foreach (var creature in currentState.Boat.OnBoardCreatures)
 						{
@@ -107,9 +113,10 @@ namespace Task1
 					#endregion
 				}
 
+                // проверка и создания новых состояний когда лодка на правом берегу и происходит посадка
 				#region RightSideToBoat
 
-				if (currentState.RightSideCreatures.Count > 0 && !currentState.Boat.OnLeftSide &&
+				if (currentState.RightSideCreatures.Count > 0 && !currentState.Boat.IsOnLeftSide &&
 				    currentState.Boat.OnBoardCreatures.Count < 2)
 				{
 					if (currentState.Boat.OnBoardCreatures.Count == 0)
@@ -144,13 +151,15 @@ namespace Task1
 
 				#endregion
 
+                // проверка предыдущего состояния на целесообразность действия
 				if (currentState.PreStateCode != StateCode.BoatTransfer)
 				{
+                    // перемещение лодки на противоположный берег
 					#region BoatTransfer
 
 					{
 						var newState = new State(currentState);
-						newState.Boat.OnLeftSide = !newState.Boat.OnLeftSide;
+						newState.Boat.IsOnLeftSide = !newState.Boat.IsOnLeftSide;
 						newState.PreStateCode = StateCode.BoatTransfer;
 						newState.PreState = currentState;
 						stateStack.Push(newState);
@@ -159,11 +168,13 @@ namespace Task1
 					#endregion
 				}
 
+                // проверка предыдущего состояния на целесообразность действия
 				if (currentState.PreStateCode != StateCode.RightSideToBoat)
 				{
+                    // проверка и создания новых состояний когда лодка на правом берегу и происходит высадка
 					#region RightSideFromBoat
 
-					if (!currentState.Boat.OnLeftSide && currentState.Boat.OnBoardCreatures.Count > 0)
+					if (!currentState.Boat.IsOnLeftSide && currentState.Boat.OnBoardCreatures.Count > 0)
 					{
 						foreach (var creature in currentState.Boat.OnBoardCreatures)
 						{
@@ -200,9 +211,10 @@ namespace Task1
 					#endregion
 				}
 
+                // проверка и создания новых состояний когда лодка на левом берегу и происходит посадка
 				#region LeftSideToBoat
 
-				if (currentState.LeftSideCreatures.Count > 0 && currentState.Boat.OnLeftSide &&
+				if (currentState.LeftSideCreatures.Count > 0 && currentState.Boat.IsOnLeftSide &&
 				    currentState.Boat.OnBoardCreatures.Count < 2)
 				{
 					if (currentState.Boat.OnBoardCreatures.Count == 0)
@@ -242,11 +254,13 @@ namespace Task1
             return null;
         }
 
+		// проверка на то, является ли состояние целевым
 		public bool IsGoalState(State state)
 		{
 			return state.RightSideCreatures.Count == 6;
 		}
 
+        // сохранить цепочку состояний в правильном порядке (от начального к целевому)
 		public Stack<State> SaveStateChain(State state)
 		{
 			var chain = new Stack<State>();
@@ -262,6 +276,7 @@ namespace Task1
             return chain;
         }
 
+		// вывести в консоль цепочку состояний
         public void PrintStateChain(Stack<State> states)
         {
             var no = 0;
@@ -273,6 +288,7 @@ namespace Task1
             }
         }
 
+		// перемешать список случайным образом
 		public static List<T> Shuffle<T>(List<T> list)
 		{
 			var rnd = new Random();

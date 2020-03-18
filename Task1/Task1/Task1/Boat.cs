@@ -5,13 +5,13 @@ namespace Task1
 {
 	public class Boat
 	{
-		public bool OnLeftSide { get; set; }
+		public bool IsOnLeftSide { get; set; }
 
 		public List<Creature> OnBoardCreatures { get; set; }
 
-		public Boat(bool onLeftSide, List<Creature> onBoardCreatures)
+		public Boat(bool isOnLeftSide, List<Creature> onBoardCreatures)
 		{
-			OnLeftSide = onLeftSide;
+			IsOnLeftSide = isOnLeftSide;
 			OnBoardCreatures = onBoardCreatures;
 		}
 
@@ -19,7 +19,7 @@ namespace Task1
 		{
 		}
 
-		public Boat(Boat boat) : this(boat.OnLeftSide, boat.OnBoardCreatures.ConvertAll(creature => new Creature(creature)))
+		public Boat(Boat boat) : this(boat.IsOnLeftSide, boat.OnBoardCreatures.ConvertAll(creature => new Creature(creature)))
 		{
 		}
 	}

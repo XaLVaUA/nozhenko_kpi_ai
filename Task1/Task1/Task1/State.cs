@@ -47,7 +47,7 @@ namespace Task1
 
 			sb.AppendLine();
 
-			if (!Boat.OnLeftSide)
+			if (!Boat.IsOnLeftSide)
 			{
 				sb.AppendLine();
 			}
@@ -58,7 +58,7 @@ namespace Task1
 				sb.Append($"{creature.Name} ");
 			}
 
-			if (Boat.OnLeftSide)
+			if (Boat.IsOnLeftSide)
 			{
 				sb.AppendLine();
 			}
