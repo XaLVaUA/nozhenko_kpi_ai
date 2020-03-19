@@ -100,18 +100,7 @@ namespace Task2
             var rowNo = state.ZeroPosition / State.XSize;
             if (candidate >= 0 && state.Board.Length > candidate && candidate / State.XSize == rowNo)
             {
-                var newState = new State(state);
-                var oldZero = newState.Board[state.ZeroPosition];
-                newState.Board[state.ZeroPosition] = state.Board[candidate];
-                newState.Board[candidate] = oldZero;
-                newState.ZeroPosition = candidate;
-                newState.PrevState = state;
-                ++newState.Steps;
-                newState.WeightValue = WeightValue(newState) + newState.Steps;
-                if (!(state.PrevState != null && state.PrevState.Equals(newState)))
-                {
-                    list.Add(newState);
-                }
+                AddNewCandidate(state, candidate, list);
             }
         }
 
@@ -119,18 +108,23 @@ namespace Task2
         {
             if (candidate >= 0 && state.Board.Length > candidate)
             {
-                var newState = new State(state);
-                var oldZero = newState.Board[state.ZeroPosition];
-                newState.Board[state.ZeroPosition] = state.Board[candidate];
-                newState.Board[candidate] = oldZero;
-                newState.ZeroPosition = candidate;
-                newState.PrevState = state;
-                ++newState.Steps;
-                newState.WeightValue = WeightValue(newState) + newState.Steps;
-                if (!(state.PrevState != null && state.PrevState.Equals(newState)))
-                {
-                    list.Add(newState);
-                }
+                AddNewCandidate(state, candidate, list);
+            }
+        }
+
+        public void AddNewCandidate(State state, int candidate, List<State> list)
+        {
+            var newState = new State(state);
+            var oldZero = newState.Board[state.ZeroPosition];
+            newState.Board[state.ZeroPosition] = state.Board[candidate];
+            newState.Board[candidate] = oldZero;
+            newState.ZeroPosition = candidate;
+            newState.PrevState = state;
+            ++newState.Steps;
+            newState.WeightValue = WeightValue(newState) + newState.Steps;
+            if (!(state.PrevState != null && state.PrevState.Equals(newState)))
+            {
+                list.Add(newState);
             }
         }
 
