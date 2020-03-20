@@ -83,15 +83,19 @@ namespace Task2
         {
             var list = new List<State>();
 
+            // проверка клетки справа
             var candidateRight = state.ZeroPosition + 1;
             CheckAddRowCandidate(state, candidateRight, list);
 
+            // проверка клетки слева
             var candidateLeft = state.ZeroPosition - 1;
             CheckAddRowCandidate(state, candidateLeft, list);
 
+            // проверка клетки сверху
             var candidateUp = state.ZeroPosition - State.YSize;
             CheckAddColCandidate(state, candidateUp, list);
 
+            // проверка клетки снизу
             var candidateDown = state.ZeroPosition + State.YSize;
             CheckAddColCandidate(state, candidateDown, list);
 
