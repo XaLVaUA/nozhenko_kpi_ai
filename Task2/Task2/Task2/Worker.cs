@@ -12,6 +12,7 @@ namespace Task2
 
         public void Do()
         {
+            Console.WriteLine("Wait please\n");
             var (result, _) = Search(GenerateStartState(), int.MaxValue);
             PrintResult(result);
         }
@@ -49,6 +50,7 @@ namespace Task2
 
             while (true)
             {
+                // сортировка по возрастанию ф значения
                 list = list.OrderBy(x => x.WeightValue).ToList();
 
                 var best = list[0];
@@ -76,6 +78,7 @@ namespace Task2
             }
         }
 
+        // нахождение проверка и добавление новых состояний
         public List<State> FindSuccessors(State state)
         {
             var list = new List<State>();
@@ -121,6 +124,7 @@ namespace Task2
             newState.ZeroPosition = candidate;
             newState.PrevState = state;
             ++newState.Steps;
+            //расчет ф значения для узла
             newState.WeightValue = WeightValue(newState) + newState.Steps;
             if (!(state.PrevState != null && state.PrevState.Equals(newState)))
             {
