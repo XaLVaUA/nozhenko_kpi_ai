@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
 namespace Task1
@@ -26,38 +27,31 @@ namespace Task1
 			return state;
 		}
 
-        // выполнение задания та вывод результата лучшей попытки поиска из attempts раз
 		public void Do(int attempts)
         {
-            var bestStateChain = new Stack<State>();
-            var bestChainCount = int.MaxValue;
-
-            for (int i = 0; i < attempts; ++i)
-            {
-                var attemptStateChain = Tick();
-
-				if (attemptStateChain == null) continue;
-
-                if (attemptStateChain.Count >= bestChainCount) continue;
-
-                bestStateChain = attemptStateChain;
-                bestChainCount = attemptStateChain.Count;
-            }
-
-			PrintStateChain(bestStateChain);
+            PrintStateChain(Tick());
         }
 
         // выполнить поиск в глубину и вернуть цепочку состояний
 		public Stack<State> Tick()
         {
+			var visited = new List<State>();
             var stateStack = new Stack<State>();
 			stateStack.Push(GenerateStartState());
 
-			while (stateStack.Count > 0)
+            while (stateStack.Count > 0)
 			{
 				var currentState = stateStack.Pop();
 
-				//Console.WriteLine(currentState);
+				// проверка на посещение и добавление к посещенным
+                if (visited.Count(x => x.Equals(currentState)) > 0)
+                {
+					continue;
+                }
+
+				visited.Add(currentState);
+
+                //Console.WriteLine(currentState);
 				//Thread.Sleep(200);
 
 				if (IsGoalState(currentState))
@@ -65,10 +59,6 @@ namespace Task1
 					return SaveStateChain(currentState);
                 }
 
-                // перемешать списки для избежания зациклености
-				Shuffle(currentState.LeftSideCreatures);
-				Shuffle(currentState.RightSideCreatures);
-				Shuffle(currentState.Boat.OnBoardCreatures);
 
                 // проверка предыдущего состояния на целесообразность действия
 				if (currentState.PreStateCode != StateCode.LeftSideToBoat)
@@ -82,28 +72,33 @@ namespace Task1
 						{
 							if (!creature.Independent)
 							{
-								if (currentState.LeftSideCreatures.Count == 1 && creature.RelatedName !=
-									currentState.LeftSideCreatures.Last().Name)
+								if (currentState.LeftSideCreatures.Any(x => x.Independent))
 								{
-									continue;
-								}
+                                    if (currentState.LeftSideCreatures.All(x => x.Name != creature.RelatedName))
+                                    {
+                                        continue;
+									}
+                                }
 							}
 							else
 							{
-								if (currentState.LeftSideCreatures.Count == 1)
+								if (currentState.LeftSideCreatures.Count(x => !x.Independent) - currentState.LeftSideCreatures.Count(x => x.Independent) == 1 && currentState.LeftSideCreatures.All(x => x.RelatedName != creature.Name))
 								{
-									var leftCreature = currentState.LeftSideCreatures.Last();
-
-									if (!leftCreature.Independent && leftCreature.RelatedName != creature.Name)
-									{
-										continue;
-									}
+									continue;
 								}
+
+                                if (currentState.LeftSideCreatures.Count(x => !x.Independent) - currentState.LeftSideCreatures.Count(x => x.Independent) > 1)
+                                {
+                                    continue;
+                                }
 							}
 
 							var newState = new State(currentState);
 							newState.Boat.OnBoardCreatures.Remove(creature);
+                            newState.Boat.OnBoardCreatures =
+                                newState.Boat.OnBoardCreatures.OrderBy(x => x.Name).ToList();
 							newState.LeftSideCreatures.Add(new Creature(creature));
+                            newState.LeftSideCreatures = newState.LeftSideCreatures.OrderBy(x => x.Name).ToList();
 							newState.PreStateCode = StateCode.LeftSideFromBoat;
 							newState.PreState = currentState;
 							stateStack.Push(newState);
@@ -119,40 +114,41 @@ namespace Task1
 				if (currentState.RightSideCreatures.Count > 0 && !currentState.Boat.IsOnLeftSide &&
 				    currentState.Boat.OnBoardCreatures.Count < 2)
 				{
-					if (currentState.Boat.OnBoardCreatures.Count == 0)
+                    foreach (var creature in currentState.RightSideCreatures)
 					{
-						foreach (var creature in currentState.RightSideCreatures)
-						{
-							var newState = new State(currentState);
-							newState.RightSideCreatures.Remove(creature);
-							newState.Boat.OnBoardCreatures.Add(new Creature(creature));
-							newState.PreStateCode = StateCode.RightSideToBoat;
-							newState.PreState = currentState;
-							stateStack.Push(newState);
-						}
-					}
-					else
-					{
-						var onBoardCreature = currentState.Boat.OnBoardCreatures.Last();
+                        if (currentState.Boat.OnBoardCreatures.Count != 0 && creature.Independent && !currentState.Boat.OnBoardCreatures[0].Independent && currentState.Boat.OnBoardCreatures[0].RelatedName != creature.Name)
+                        {
+							continue;
+                        }
 
-						foreach (var creature in currentState.RightSideCreatures)
-						{
-							if (!((creature.Independent) || (!creature.Independent && !onBoardCreature.Independent) || (!creature.Independent && creature.RelatedName != onBoardCreature.Name))) continue;
+                        if (creature.Independent &&
+                            currentState.RightSideCreatures.Any(x => x.RelatedName == creature.Name))
+                        {
+							continue;
+                        }
 
-							var newState = new State(currentState);
-							newState.RightSideCreatures.Remove(creature);
-							newState.Boat.OnBoardCreatures.Add(new Creature(creature));
-							newState.PreStateCode = StateCode.RightSideToBoat;
-							newState.PreState = currentState;
-							stateStack.Push(newState);
-						}
+                        if (currentState.Boat.OnBoardCreatures.Count != 0 && !creature.Independent && currentState.Boat.OnBoardCreatures[0].Independent &&
+                            currentState.Boat.OnBoardCreatures[0].RelatedName != creature.Name)
+                        {
+							continue;
+                        }
+
+                        var newState = new State(currentState);
+						newState.RightSideCreatures.Remove(creature);
+                        newState.RightSideCreatures = newState.RightSideCreatures.OrderBy(x => x.Name).ToList();
+						newState.Boat.OnBoardCreatures.Add(new Creature(creature));
+                        newState.Boat.OnBoardCreatures =
+                            newState.Boat.OnBoardCreatures.OrderBy(x => x.Name).ToList();
+						newState.PreStateCode = StateCode.RightSideToBoat;
+						newState.PreState = currentState;
+						stateStack.Push(newState);
 					}
-				}
+                }
 
 				#endregion
 
                 // проверка предыдущего состояния на целесообразность действия
-				if (currentState.PreStateCode != StateCode.BoatTransfer)
+				if (currentState.PreStateCode != StateCode.BoatTransfer && currentState.Boat.OnBoardCreatures.Count > 0)
 				{
                     // перемещение лодки на противоположный берег
 					#region BoatTransfer
@@ -171,82 +167,88 @@ namespace Task1
                 // проверка предыдущего состояния на целесообразность действия
 				if (currentState.PreStateCode != StateCode.RightSideToBoat)
 				{
-                    // проверка и создания новых состояний когда лодка на правом берегу и происходит высадка
+					// проверка и создания новых состояний когда лодка на правом берегу и происходит высадка
 					#region RightSideFromBoat
 
 					if (!currentState.Boat.IsOnLeftSide && currentState.Boat.OnBoardCreatures.Count > 0)
-					{
-						foreach (var creature in currentState.Boat.OnBoardCreatures)
-						{
-							if (!creature.Independent)
-							{
-								if (currentState.RightSideCreatures.Count == 1 && creature.RelatedName !=
-									currentState.RightSideCreatures.Last().Name)
-								{
-									continue;
-								}
-							}
-							else
-							{
-								if (currentState.RightSideCreatures.Count == 1)
-								{
-									var rightCreature = currentState.RightSideCreatures.Last();
+                    {
+                        foreach (var creature in currentState.Boat.OnBoardCreatures)
+                        {
+                            if (!creature.Independent)
+                            {
+                                if (currentState.RightSideCreatures.Any(x => x.Independent))
+                                {
+                                    if (currentState.RightSideCreatures.All(x => x.Name != creature.RelatedName))
+                                    {
+                                        continue;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (currentState.RightSideCreatures.Count(x => !x.Independent) - currentState.RightSideCreatures.Count(x => x.Independent) == 1 && currentState.RightSideCreatures.All(x => x.RelatedName != creature.Name))
+                                {
+                                    continue;
+                                }
 
-									if (!rightCreature.Independent && rightCreature.RelatedName != creature.Name)
-									{
-										continue;
-									}
-								}
+                                if (currentState.RightSideCreatures.Count(x => !x.Independent) - currentState.RightSideCreatures.Count(x => x.Independent) > 1)
+                                {
+                                    continue;
+                                }
 							}
 
-							var newState = new State(currentState);
-							newState.Boat.OnBoardCreatures.Remove(creature);
+                            var newState = new State(currentState);
+                            newState.Boat.OnBoardCreatures.Remove(creature);
+                            newState.Boat.OnBoardCreatures =
+                                newState.Boat.OnBoardCreatures.OrderBy(x => x.Name).ToList();
 							newState.RightSideCreatures.Add(new Creature(creature));
-							newState.PreStateCode = StateCode.RightSideFromBoat;
-							newState.PreState = currentState;
-							stateStack.Push(newState);
-						}
-					}
+                            newState.RightSideCreatures = newState.RightSideCreatures.OrderBy(x => x.Name).ToList();
+                            newState.PreStateCode = StateCode.RightSideFromBoat;
+                            newState.PreState = currentState;
+                            stateStack.Push(newState);
+                        }
+                    }
 
 					#endregion
 				}
 
-                // проверка и создания новых состояний когда лодка на левом берегу и происходит посадка
+				// проверка и создания новых состояний когда лодка на левом берегу и происходит посадка
 				#region LeftSideToBoat
 
 				if (currentState.LeftSideCreatures.Count > 0 && currentState.Boat.IsOnLeftSide &&
-				    currentState.Boat.OnBoardCreatures.Count < 2)
-				{
-					if (currentState.Boat.OnBoardCreatures.Count == 0)
-					{
-						foreach (var creature in currentState.LeftSideCreatures)
-						{
-							var newState = new State(currentState);
-							newState.LeftSideCreatures.Remove(creature);
-							newState.Boat.OnBoardCreatures.Add(new Creature(creature));
-							newState.PreStateCode = StateCode.LeftSideToBoat;
-							newState.PreState = currentState;
-							stateStack.Push(newState);
-						}
-					}
-					else
-					{
-						var onBoardCreature = currentState.Boat.OnBoardCreatures.Last();
+                    currentState.Boat.OnBoardCreatures.Count < 2)
+                {
 
-						foreach (var creature in currentState.LeftSideCreatures)
-						{
-							if (creature.Independent && !onBoardCreature.Independent && onBoardCreature.RelatedName != creature.Name) continue;
-							if (!creature.Independent && onBoardCreature.Independent && creature.RelatedName != onBoardCreature.Name) continue;
+                    foreach (var creature in currentState.LeftSideCreatures)
+                    {
+                        if (currentState.Boat.OnBoardCreatures.Count != 0 && creature.Independent && !currentState.Boat.OnBoardCreatures[0].Independent && currentState.Boat.OnBoardCreatures[0].RelatedName != creature.Name)
+                        {
+                            continue;
+                        }
 
-							var newState = new State(currentState);
-							newState.LeftSideCreatures.Remove(creature);
-							newState.Boat.OnBoardCreatures.Add(new Creature(creature));
-							newState.PreStateCode = StateCode.LeftSideToBoat;
-							newState.PreState = currentState;
-							stateStack.Push(newState);
-						}
-					}
-				}
+                        if (creature.Independent &&
+                            currentState.RightSideCreatures.Any(x => x.RelatedName == creature.Name))
+                        {
+                            continue;
+                        }
+
+						if (currentState.Boat.OnBoardCreatures.Count != 0 && !creature.Independent && currentState.Boat.OnBoardCreatures[0].Independent &&
+                            currentState.Boat.OnBoardCreatures[0].RelatedName != creature.Name)
+                        {
+                            continue;
+                        }
+
+                        var newState = new State(currentState);
+                        newState.LeftSideCreatures.Remove(creature);
+                        newState.LeftSideCreatures = newState.LeftSideCreatures.OrderBy(x => x.Name).ToList();
+                        newState.Boat.OnBoardCreatures.Add(new Creature(creature));
+                        newState.Boat.OnBoardCreatures =
+                            newState.Boat.OnBoardCreatures.OrderBy(x => x.Name).ToList();
+						newState.PreStateCode = StateCode.LeftSideToBoat;
+                        newState.PreState = currentState;
+                        stateStack.Push(newState);
+                    }
+                }
 
 				#endregion
 			}

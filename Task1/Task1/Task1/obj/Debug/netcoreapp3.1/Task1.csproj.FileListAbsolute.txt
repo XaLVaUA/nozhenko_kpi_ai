@@ -20,3 +20,5 @@ D:\development\kpi\c3s2\ai\Task1\Task1\Task1\obj\Debug\netcoreapp3.1\Task1.Assem
 D:\development\kpi\c3s2\ai\Task1\Task1\Task1\obj\Debug\netcoreapp3.1\Task1.AssemblyInfo.cs
 D:\development\kpi\c3s2\ai\Task1\Task1\Task1\obj\Debug\netcoreapp3.1\Task1.dll
 D:\development\kpi\c3s2\ai\Task1\Task1\Task1\obj\Debug\netcoreapp3.1\Task1.pdb
+D:\development\kpi\c3s2\ai\Task1\Task1\Task1\obj\Debug\netcoreapp3.1\Task1.csproj.CoreCompileInputs.cache
+D:\development\kpi\c3s2\ai\Task1\Task1\Task1\obj\Debug\netcoreapp3.1\Task1.genruntimeconfig.cache

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Task1
@@ -76,5 +77,23 @@ namespace Task1
 
 			return sb.ToString();
 		}
-	}
+
+        protected bool Equals(State other)
+        {
+            return Equals(Boat, other.Boat) && LeftSideCreatures.SequenceEqual(other.LeftSideCreatures) && RightSideCreatures.SequenceEqual(other.RightSideCreatures);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((State) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Boat, LeftSideCreatures, RightSideCreatures);
+        }
+    }
 }
