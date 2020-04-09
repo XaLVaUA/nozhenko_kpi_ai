@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\development\\kpi\\c3s2\\ai\\Task2\\Task2\\Task2\\Task2.csproj",
-      "projectName": "Task2",
-      "projectPath": "D:\\development\\kpi\\c3s2\\ai\\Task2\\Task2\\Task2\\Task2.csproj",
+      "projectUniqueName": "D:\\development\\kpi\\c3s2\\ai\\Task3\\Task3\\Task3\\Task3.csproj",
+      "projectName": "Task3",
+      "projectPath": "D:\\development\\kpi\\c3s2\\ai\\Task3\\Task3\\Task3\\Task3.csproj",
       "packagesPath": "C:\\Users\\yaroslav\\.nuget\\packages\\",
-      "outputPath": "D:\\development\\kpi\\c3s2\\ai\\Task2\\Task2\\Task2\\obj\\",
+      "outputPath": "D:\\development\\kpi\\c3s2\\ai\\Task3\\Task3\\Task3\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\yaroslav\\AppData\\Roaming\\NuGet\\NuGet.Config",
