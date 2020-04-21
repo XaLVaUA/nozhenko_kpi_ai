@@ -49,7 +49,7 @@ namespace Task3
                 var pool = new List<State>();
 
                 {
-                    if (state.Code != StateCode.Start && state.Prev.Code != StateCode.Transfer)
+                    if (state.Code != StateCode.Start && state.Boat.Count > 0 && state.Code != StateCode.Transfer)
                     {
                         var newState = new State(state);
                         newState.BoatLeft = !newState.BoatLeft;
@@ -62,42 +62,230 @@ namespace Task3
                 }
 
                 {
-                    if (state.BoatLeft && state.Left.Count > 0 && state.Boat.Count < 2)
+                    if (state.BoatLeft && state.Left.Count > 0)
                     {
-                        if (state.Left.Count < 3)
+                        if (state.Boat.Count == 0)
                         {
                             foreach (var creature in state.Left)
                             {
+                                {
+                                    var newState = new State(state);
+                                    var cre = newState.Left.Find(x => x.Equals(creature));
+
+                                    newState.Left.Remove(cre);
+                                    newState.Boat.Add(cre);
+
+                                    newState.Code = StateCode.FromLeft;
+                                    newState.OrderAll();
+                                    if (IsBeachValid(newState.Left) && visited.Find(x => x.Equals(newState)) == null)
+                                    {
+                                        pool.Add(newState);
+                                    }
+                                }
+
+                                foreach (var creature2 in state.Left)
+                                {
+                                    if (creature.Equals(creature2))
+                                    {
+                                        continue;
+                                    }
+
+                                    var newState = new State(state);
+                                    var cre = newState.Left.Find(x => x.Equals(creature));
+                                    var cre2 = newState.Left.Find(x => x.Equals(creature2));
+
+                                    newState.Left.Remove(cre);
+                                    newState.Boat.Add(cre);
+
+                                    newState.Left.Remove(cre2);
+                                    newState.Boat.Add(cre2);
+
+                                    newState.Code = StateCode.FromLeft;
+                                    newState.OrderAll();
+                                    if (IsBeachValid(newState.Left) && visited.Find(x => x.Equals(newState)) == null)
+                                    {
+                                        pool.Add(newState);
+                                    }
+                                }
+                            }
+                        }
+
+                        if (state.Boat.Count == 1)
+                        {
+                            foreach (var creature in state.Left)
+                            {
+                                { 
+                                    var newState = new State(state);
+                                    var cre = newState.Left.Find(x => x.Equals(creature));
+
+                                    newState.Left.Remove(cre);
+                                    newState.Boat.Add(cre);
+
+                                    newState.Code = StateCode.FromLeft;
+                                    newState.OrderAll();
+                                    if (IsBeachValid(newState.Left) && visited.Find(x => x.Equals(newState)) == null)
+                                    {
+                                        pool.Add(newState);
+                                    }
+                                }
+
+                                {
+                                    var newState = new State(state);
+                                    var cre = newState.Left.Find(x => x.Equals(creature));
+                                    var boatCre = newState.Boat.First();
+
+                                    newState.Left.Remove(cre);
+                                    newState.Boat.Add(cre);
+
+                                    newState.Left.Add(boatCre);
+                                    newState.Boat.Remove(boatCre);
+
+                                    newState.Code = StateCode.FromLeft;
+                                    newState.OrderAll();
+                                    if (IsBeachValid(newState.Left) && visited.Find(x => x.Equals(newState)) == null)
+                                    {
+                                        pool.Add(newState);
+                                    }
+                                }
+
+                                foreach (var creature2 in state.Left)
+                                {
+                                    if (creature.Equals(creature2))
+                                    {
+                                        continue;
+                                    }
+
+                                    var newState = new State(state);
+                                    var cre = newState.Left.Find(x => x.Equals(creature));
+                                    var cre2 = newState.Left.Find(x => x.Equals(creature2));
+                                    var boatCre = newState.Boat.First();
+
+                                    newState.Left.Remove(cre);
+                                    newState.Boat.Add(cre);
+
+                                    newState.Left.Remove(cre2);
+                                    newState.Boat.Add(cre2);
+
+                                    newState.Left.Add(boatCre);
+                                    newState.Boat.Remove(boatCre);
+
+                                    newState.Code = StateCode.FromLeft;
+                                    newState.OrderAll();
+                                    if (IsBeachValid(newState.Left) && visited.Find(x => x.Equals(newState)) == null)
+                                    {
+                                        pool.Add(newState);
+                                    }
+                                }
+                            }
+                        }
+
+                        if (state.Boat.Count == 2)
+                        {
+                            {
                                 var newState = new State(state);
-                                var cre = newState.Left.Find(x => x.Equals(creature));
-                                newState.Left.Remove(cre);
-                                newState.Boat.Add(cre);
+
+                                newState.Left.AddRange(newState.Boat);
+                                newState.Boat.Clear();
+
                                 newState.Code = StateCode.FromLeft;
                                 newState.OrderAll();
-                                if (visited.Find(x => x.Equals(newState)) == null)
+                                if (IsBeachValid(newState.Left) &&
+                                    visited.Find(x => x.Equals(newState)) == null)
                                 {
                                     pool.Add(newState);
                                 }
                             }
-                        }
-                        else if (state.Boat.Count == 0)
-                        {
-                            foreach (var c in state.Left.Where(x => x.IsHumanEating))
+
+                            foreach (var creature in state.Left)
                             {
-                                foreach (var m in state.Left.Where(x => !x.IsHumanEating))
+                                var newState = new State(state);
+                                var cre = newState.Left.Find(x => x.Equals(creature));
+
+                                newState.Left.AddRange(newState.Boat);
+                                newState.Boat.Clear();
+                                newState.Left.Remove(cre);
+                                newState.Boat.Add(cre);
+
+                                newState.Code = StateCode.FromRight;
+                                newState.OrderAll();
+                                if (IsBeachValid(newState.Left) &&
+                                    visited.Find(x => x.Equals(newState)) == null)
+                                {
+                                    pool.Add(newState);
+                                }
+                            }
+
+                            foreach (var boatCreature in state.Boat)
+                            {
                                 {
                                     var newState = new State(state);
-                                    var can = newState.Left.Find(x => x.Equals(c));
-                                    var mis = newState.Left.Find(x => x.Equals(m));
-                                    newState.Left.Remove(can);
-                                    newState.Left.Remove(mis);
-                                    newState.Boat.Add(can);
-                                    newState.Boat.Add(mis);
+                                    var boatCre = newState.Boat.Find(x => x.Equals(boatCreature));
+
+                                    newState.Left.Add(boatCre);
+                                    newState.Boat.Remove(boatCre);
+
                                     newState.Code = StateCode.FromLeft;
                                     newState.OrderAll();
-                                    if (visited.Find(x => x.Equals(newState)) == null)
+                                    if (IsBeachValid(newState.Left) &&
+                                        visited.Find(x => x.Equals(newState)) == null)
                                     {
                                         pool.Add(newState);
+                                    }
+                                }
+
+                                foreach (var creature in state.Left)
+                                {
+                                    {
+                                        var newState = new State(state);
+                                        var cre = newState.Left.Find(x => x.Equals(creature));
+                                        var boatCre = newState.Boat.Find(x => x.Equals(boatCreature));
+
+                                        newState.Left.Remove(cre);
+                                        newState.Boat.Add(cre);
+
+                                        newState.Left.Add(boatCre);
+                                        newState.Boat.Remove(boatCre);
+
+                                        newState.Code = StateCode.FromLeft;
+                                        newState.OrderAll();
+                                        if (IsBeachValid(newState.Left) &&
+                                            visited.Find(x => x.Equals(newState)) == null)
+                                        {
+                                            pool.Add(newState);
+                                        }
+                                    }
+
+                                    {
+                                        foreach (var creature2 in state.Left)
+                                        {
+                                            if (creature.Equals(creature2))
+                                            {
+                                                continue;
+                                            }
+
+                                            var newState = new State(state);
+                                            var cre = newState.Left.Find(x => x.Equals(creature));
+                                            var cre2 = newState.Left.Find(x => x.Equals(creature2));
+                                            var boatCre = newState.Boat.First();
+                                            var boatCre2 = newState.Boat.Last();
+
+                                            newState.Left.Remove(cre);
+                                            newState.Boat.Add(cre);
+                                            newState.Left.Remove(cre2);
+                                            newState.Boat.Add(cre2);
+
+                                            newState.Boat.Remove(boatCre);
+                                            newState.Left.Add(boatCre);
+                                            newState.Boat.Remove(boatCre2);
+                                            newState.Left.Add(boatCre2);
+
+                                            newState.Code = StateCode.FromLeft;
+                                            newState.OrderAll();
+                                            if (IsBeachValid(newState.Left) && visited.Find(x => x.Equals(newState)) == null)
+                                            {
+                                                pool.Add(newState);
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -106,42 +294,252 @@ namespace Task3
                 }
 
                 {
-                    if (!state.BoatLeft && state.Right.Count > 0 && state.Boat.Count < 2)
+                    if (!state.BoatLeft && state.Right.Count > 0)
                     {
-                        if (state.Right.Count < 3)
+                        if (state.Boat.Count == 0)
                         {
                             foreach (var creature in state.Right)
                             {
+                                {
+                                    var newState = new State(state);
+                                    var cre = newState.Right.Find(x => x.Equals(creature));
+
+                                    newState.Right.Remove(cre);
+                                    newState.Boat.Add(cre);
+
+                                    newState.Code = StateCode.FromRight;
+                                    newState.OrderAll();
+                                    if (IsBeachValid(newState.Right) && visited.Find(x => x.Equals(newState)) == null)
+                                    {
+                                        pool.Add(newState);
+                                    }
+                                }
+
+                                foreach (var creature2 in state.Right)
+                                {
+                                    if (creature.Equals(creature2))
+                                    {
+                                        continue;
+                                    }
+
+                                    var newState = new State(state);
+                                    var cre = newState.Right.Find(x => x.Equals(creature));
+                                    var cre2 = newState.Right.Find(x => x.Equals(creature2));
+
+                                    newState.Right.Remove(cre);
+                                    newState.Boat.Add(cre);
+
+                                    newState.Right.Remove(cre2);
+                                    newState.Boat.Add(cre2);
+
+                                    newState.Code = StateCode.FromRight;
+                                    newState.OrderAll();
+                                    if (IsBeachValid(newState.Right) && visited.Find(x => x.Equals(newState)) == null)
+                                    {
+                                        pool.Add(newState);
+                                    }
+                                }
+                            }
+                        }
+
+                        if (state.Boat.Count == 1)
+                        {
+                            foreach (var creature in state.Right)
+                            {
+                                {
+                                    var newState = new State(state);
+                                    var cre = newState.Right.Find(x => x.Equals(creature));
+
+                                    newState.Right.Remove(cre);
+                                    newState.Boat.Add(cre);
+
+                                    newState.Code = StateCode.FromLeft;
+                                    newState.OrderAll();
+                                    if (IsBeachValid(newState.Right) && visited.Find(x => x.Equals(newState)) == null)
+                                    {
+                                        pool.Add(newState);
+                                    }
+                                }
+
+                                {
+                                    var newState = new State(state);
+                                    var cre = newState.Right.Find(x => x.Equals(creature));
+                                    var boatCre = newState.Boat.First();
+
+                                    newState.Right.Remove(cre);
+                                    newState.Boat.Add(cre);
+
+                                    newState.Right.Add(boatCre);
+                                    newState.Boat.Remove(boatCre);
+
+                                    newState.Code = StateCode.FromRight;
+                                    newState.OrderAll();
+                                    if (IsBeachValid(newState.Right) && visited.Find(x => x.Equals(newState)) == null)
+                                    {
+                                        pool.Add(newState);
+                                    }
+                                }
+
+                                foreach (var creature2 in state.Right)
+                                {
+                                    if (creature.Equals(creature2))
+                                    {
+                                        continue;
+                                    }
+
+                                    var newState = new State(state);
+                                    var cre = newState.Right.Find(x => x.Equals(creature));
+                                    var cre2 = newState.Right.Find(x => x.Equals(creature2));
+                                    var boatCre = newState.Boat.First();
+
+                                    newState.Right.Remove(cre);
+                                    newState.Boat.Add(cre);
+
+                                    newState.Right.Remove(cre2);
+                                    newState.Boat.Add(cre2);
+
+                                    newState.Right.Add(boatCre);
+                                    newState.Boat.Remove(boatCre);
+
+                                    newState.Code = StateCode.FromRight;
+                                    newState.OrderAll();
+                                    if (IsBeachValid(newState.Right) && visited.Find(x => x.Equals(newState)) == null)
+                                    {
+                                        pool.Add(newState);
+                                    }
+                                }
+                            }
+                        }
+
+                        if (state.Boat.Count == 2)
+                        {
+                            {
                                 var newState = new State(state);
-                                var cre = newState.Right.Find(x => x.Equals(creature));
-                                newState.Right.Remove(cre);
-                                newState.Boat.Add(cre);
+
+                                newState.Right.AddRange(newState.Boat);
+                                newState.Boat.Clear();
+
                                 newState.Code = StateCode.FromRight;
                                 newState.OrderAll();
-                                if (visited.Find(x => x.Equals(newState)) == null)
+                                if (IsBeachValid(newState.Right) &&
+                                    visited.Find(x => x.Equals(newState)) == null)
                                 {
                                     pool.Add(newState);
                                 }
                             }
-                        }
-                        else if (state.Boat.Count == 0)
-                        {
-                            foreach (var c in state.Right.Where(x => x.IsHumanEating))
+
+                            foreach (var creature in state.Right)
                             {
-                                foreach (var m in state.Right.Where(x => !x.IsHumanEating))
                                 {
                                     var newState = new State(state);
-                                    var can = newState.Right.Find(x => x.Equals(c));
-                                    var mis = newState.Right.Find(x => x.Equals(m));
-                                    newState.Right.Remove(can);
-                                    newState.Right.Remove(mis);
-                                    newState.Boat.Add(can);
-                                    newState.Boat.Add(mis);
+                                    var cre = newState.Right.Find(x => x.Equals(creature));
+
+                                    newState.Right.AddRange(newState.Boat);
+                                    newState.Boat.Clear();
+                                    newState.Right.Remove(cre);
+                                    newState.Boat.Add(cre);
+
                                     newState.Code = StateCode.FromRight;
                                     newState.OrderAll();
-                                    if (visited.Find(x => x.Equals(newState)) == null)
+                                    if (IsBeachValid(newState.Right) &&
+                                        visited.Find(x => x.Equals(newState)) == null)
                                     {
                                         pool.Add(newState);
+                                    }
+                                }
+                            }
+
+                            foreach (var boatCreature in state.Boat)
+                            {
+                                {
+                                    var newState = new State(state);
+                                    var boatCre = newState.Boat.Find(x => x.Equals(boatCreature));
+
+                                    newState.Right.Add(boatCre);
+                                    newState.Boat.Remove(boatCre);
+
+                                    newState.Code = StateCode.FromRight;
+                                    newState.OrderAll();
+                                    if (IsBeachValid(newState.Right) &&
+                                        visited.Find(x => x.Equals(newState)) == null)
+                                    {
+                                        pool.Add(newState);
+                                    }
+                                }
+
+                                foreach (var creature in state.Right)
+                                {
+                                    {
+                                        var newState = new State(state);
+                                        var cre = newState.Right.Find(x => x.Equals(creature));
+                                        var boatCre = newState.Boat.Find(x => x.Equals(boatCreature));
+
+                                        newState.Right.Remove(cre);
+                                        newState.Boat.Add(cre);
+
+                                        newState.Right.Add(boatCre);
+                                        newState.Boat.Remove(boatCre);
+
+                                        newState.Code = StateCode.FromRight;
+                                        newState.OrderAll();
+                                        if (IsBeachValid(newState.Right) &&
+                                            visited.Find(x => x.Equals(newState)) == null)
+                                        {
+                                            pool.Add(newState);
+                                        }
+                                    }
+
+                                    {
+                                        var newState = new State(state);
+                                        var cre = newState.Right.Find(x => x.Equals(creature));
+                                        var boatCre = newState.Boat.Find(x => x.Equals(boatCreature));
+
+                                        newState.Right.Remove(cre);
+                                        newState.Boat.Add(cre);
+
+                                        newState.Right.Add(boatCre);
+                                        newState.Boat.Remove(boatCre);
+
+                                        newState.Code = StateCode.FromRight;
+                                        newState.OrderAll();
+                                        if (IsBeachValid(newState.Right) &&
+                                            visited.Find(x => x.Equals(newState)) == null)
+                                        {
+                                            pool.Add(newState);
+                                        }
+                                    }
+
+                                    {
+                                        foreach (var creature2 in state.Right)
+                                        {
+                                            if (creature.Equals(creature2))
+                                            {
+                                                continue;
+                                            }
+
+                                            var newState = new State(state);
+                                            var cre = newState.Right.Find(x => x.Equals(creature));
+                                            var cre2 = newState.Right.Find(x => x.Equals(creature2));
+                                            var boatCre = newState.Boat.First();
+                                            var boatCre2 = newState.Boat.Last();
+
+                                            newState.Right.Remove(cre);
+                                            newState.Boat.Add(cre);
+                                            newState.Right.Remove(cre2);
+                                            newState.Boat.Add(cre2);
+
+                                            newState.Boat.Remove(boatCre);
+                                            newState.Right.Add(boatCre);
+                                            newState.Boat.Remove(boatCre2);
+                                            newState.Right.Add(boatCre2);
+
+                                            newState.Code = StateCode.FromLeft;
+                                            newState.OrderAll();
+                                            if (IsBeachValid(newState.Right) && visited.Find(x => x.Equals(newState)) == null)
+                                            {
+                                                pool.Add(newState);
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -152,28 +550,38 @@ namespace Task3
                 {
                     if (state.BoatLeft && state.Boat.Count > 0)
                     {
-                        
-                        if (state.Boat.Count == 2 && state.Left.Count > 1)
+                        foreach (var boatCreature in state.Boat)
                         {
-                            var newState = new State(state);
-                            newState.Left.AddRange(newState.Boat);
-                            newState.Boat.Clear();
-                            newState.Code = StateCode.ToLeft;
-                            if (visited.Find(x => x.Equals(newState)) == null)
-                            {
-                                pool.Add(newState);
-                            }
-                        }
-                        else if (state.Left.Count < 2)
-                        {
-                            foreach (var creature in state.Boat)
                             {
                                 var newState = new State(state);
-                                var cre = newState.Boat.Find(x => x.Equals(creature));
-                                newState.Boat.Remove(cre);
-                                newState.Left.Add(cre);
+                                var boatCre = newState.Boat.Find(x => x.Equals(boatCreature));
+
+                                newState.Boat.Remove(boatCre);
+                                newState.Left.Add(boatCre);
+
                                 newState.Code = StateCode.ToLeft;
-                                if (visited.Find(x => x.Equals(newState)) == null)
+                                newState.OrderAll();
+                                if (IsBeachValid(newState.Left) && visited.Find(x => x.Equals(newState)) == null)
+                                {
+                                    pool.Add(newState);
+                                }
+                            }
+
+                            foreach (var creature in state.Left)
+                            {
+                                var newState = new State(state);
+                                var cre = newState.Left.Find(x => x.Equals(creature));
+                                var boatCre = newState.Boat.Find(x => x.Equals(boatCreature));
+
+                                newState.Left.Remove(cre);
+                                newState.Boat.Add(cre);
+
+                                newState.Boat.Remove(boatCre);
+                                newState.Left.Add(boatCre);
+
+                                newState.Code = StateCode.ToLeft;
+                                newState.OrderAll();
+                                if (IsBeachValid(newState.Left) && visited.Find(x => x.Equals(newState)) == null)
                                 {
                                     pool.Add(newState);
                                 }
@@ -185,28 +593,38 @@ namespace Task3
                 {
                     if (!state.BoatLeft && state.Boat.Count > 0)
                     {
-
-                        if (state.Boat.Count == 2 && state.Right.Count > 1)
+                        foreach (var boatCreature in state.Boat)
                         {
-                            var newState = new State(state);
-                            newState.Right.AddRange(newState.Boat);
-                            newState.Boat.Clear();
-                            newState.Code = StateCode.ToRight;
-                            if (visited.Find(x => x.Equals(newState)) == null)
-                            {
-                                pool.Add(newState);
-                            }
-                        }
-                        else if (state.Right.Count < 2)
-                        {
-                            foreach (var creature in state.Boat)
                             {
                                 var newState = new State(state);
-                                var cre = newState.Boat.Find(x => x.Equals(creature));
-                                newState.Boat.Remove(cre);
-                                newState.Right.Add(cre);
+                                var boatCre = newState.Boat.Find(x => x.Equals(boatCreature));
+
+                                newState.Boat.Remove(boatCre);
+                                newState.Right.Add(boatCre);
+
                                 newState.Code = StateCode.ToRight;
-                                if (visited.Find(x => x.Equals(newState)) == null)
+                                newState.OrderAll();
+                                if (IsBeachValid(newState.Right) && visited.Find(x => x.Equals(newState)) == null)
+                                {
+                                    pool.Add(newState);
+                                }
+                            }
+
+                            foreach (var creature in state.Right)
+                            {
+                                var newState = new State(state);
+                                var cre = newState.Right.Find(x => x.Equals(creature));
+                                var boatCre = newState.Boat.Find(x => x.Equals(boatCreature));
+
+                                newState.Right.Remove(cre);
+                                newState.Boat.Add(cre);
+
+                                newState.Boat.Remove(boatCre);
+                                newState.Right.Add(boatCre);
+
+                                newState.Code = StateCode.ToRight;
+                                newState.OrderAll();
+                                if (IsBeachValid(newState.Right) && visited.Find(x => x.Equals(newState)) == null)
                                 {
                                     pool.Add(newState);
                                 }
@@ -217,14 +635,12 @@ namespace Task3
 
                 {
                     var newState = false;
-                    foreach (var st in pool)
+                    pool = pool.OrderBy(x => Val(x)).ToList();
+                    var candidate = pool.Last();
+                    if (Val(candidate) >= curVal)
                     {
-                        if (Val(st) >= curVal)
-                        {
-                            state = st;
-                            newState = true;
-                            break;
-                        }
+                        state = candidate;
+                        newState = true;
                     }
 
                     if (!newState)
@@ -242,22 +658,35 @@ namespace Task3
                 return 0;
             }
 
+            if (state.Right.Count == 6)
+            {
+                return 7;
+            }
+
             if (!state.BoatLeft)
             {
                 return state.Right.Count + state.Boat.Count;
             }
 
-            if (state.BoatLeft)
-            {
-                return state.Right.Count + 2;
-            }
-
-            return state.Right.Count;
+            return state.Right.Count + 2;
         }
 
         public bool IsGoal(State state)
         {
             return state.Right.Count == 6;
+        }
+
+        public bool IsBeachValid(List<Creature> creatures)
+        {
+            var hCount = creatures.Count(x => x.IsHumanEating);
+            var mCount = creatures.Count(x => !x.IsHumanEating);
+
+            if (hCount == 0 || mCount == 0)
+            {
+                return true;
+            }
+
+            return hCount - mCount == 0;
         }
     }
 }
